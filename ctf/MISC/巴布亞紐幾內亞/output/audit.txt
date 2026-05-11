@@ -1,0 +1,21 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Sun May  3 16:56:46 2026
+Invocation: foremost -i test 
+Output directory: /home/yhl/NSYSU/NetSec/ctf/MISC/巴布亞紐幾內亞/output
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: test
+Start: Sun May  3 16:56:46 2026
+Length: 575 B (575 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+Finish: Sun May  3 16:56:46 2026
+
+0 FILES EXTRACTED
+	
+------------------------------------------------------------------
+
+Foremost finished at Sun May  3 16:56:46 2026

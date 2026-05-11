@@ -1,0 +1,23 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Sun May  3 17:08:36 2026
+Invocation: foremost -i Easy_a44c4fa8fadb58d8077c61b9e936fe07.wav -t all -o output_folder 
+Output directory: /home/yhl/NSYSU/NetSec/ctf/Steganography/土耳其/output_folder
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: Easy_a44c4fa8fadb58d8077c61b9e936fe07.wav
+Start: Sun May  3 17:08:36 2026
+Length: 7 MB (7960364 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+0:	00000000.wav 	       7 MB 	          0 	 
+Finish: Sun May  3 17:08:36 2026
+
+1 FILES EXTRACTED
+	
+rif:= 1
+------------------------------------------------------------------
+
+Foremost finished at Sun May  3 17:08:36 2026

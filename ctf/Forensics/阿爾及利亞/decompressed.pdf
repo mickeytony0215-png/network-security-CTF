@@ -1,0 +1,84 @@
+%PDF-1.7
+%¿÷¢þ
+%QDF-1.0
+
+%% Original object ID: 1 0
+1 0 obj
+<<
+  /OpenAction 2 0 R
+  /Pages 3 0 R
+  /Type /Catalog
+>>
+endobj
+
+%% Original object ID: 4 0
+2 0 obj
+<<
+  /JS 4 0 R
+  /S /JavaScript
+  /Type /Action
+>>
+endobj
+
+%% Original object ID: 2 0
+3 0 obj
+<<
+  /Count 1
+  /Kids [
+    6 0 R
+  ]
+  /Type /Pages
+>>
+endobj
+
+%% Original object ID: 5 0
+4 0 obj
+<<
+  /Length 5 0 R
+>>
+stream
+app.alert("Can you find the flag?",3);
+//You are almost get it!
+////RkxBR3tQREZfamF2YXNjcmlwdF9lbmMwZGVkfQo=
+endstream
+endobj
+
+%QDF: ignore_newline
+5 0 obj
+108
+endobj
+
+%% Page 1
+%% Original object ID: 3 0
+6 0 obj
+<<
+  /MediaBox [
+    0
+    0
+    600
+    800
+  ]
+  /Parent 3 0 R
+  /Resources <<
+  >>
+  /Type /Page
+>>
+endobj
+
+xref
+0 7
+0000000000 65535 f 
+0000000052 00000 n 
+0000000153 00000 n 
+0000000247 00000 n 
+0000000346 00000 n 
+0000000531 00000 n 
+0000000588 00000 n 
+trailer <<
+  /Root 1 0 R
+  /Size 7
+  /ID [<fd7cf6773632983e09f744335f54cc06><fd7cf6773632983e09f744335f54cc06>]
+>>
+startxref
+707
+%%EOF

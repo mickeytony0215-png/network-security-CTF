@@ -1,0 +1,21 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Mon May  4 02:05:29 2026
+Invocation: foremost -i easy2_f3a36d35841c9b2ba112d15590276907.flac 
+Output directory: /home/yhl/NSYSU/NetSec/ctf/Steganography/希臘/output
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: easy2_f3a36d35841c9b2ba112d15590276907.flac
+Start: Mon May  4 02:05:29 2026
+Length: 6 MB (6624000 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+Finish: Mon May  4 02:05:29 2026
+
+0 FILES EXTRACTED
+	
+------------------------------------------------------------------
+
+Foremost finished at Mon May  4 02:05:29 2026

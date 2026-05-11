@@ -1,0 +1,45 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Mon May  4 00:58:38 2026
+Invocation: foremost -i image_fa19c599f39ae0432e3d9409d0a653a1.dd -o output_foremost 
+Output directory: /home/yhl/NSYSU/NetSec/ctf/Forensics/澳洲/output_foremost
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: image_fa19c599f39ae0432e3d9409d0a653a1.dd
+Start: Mon May  4 00:58:38 2026
+Length: 23 MB (24117248 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+0:	00006736.jpg 	     248 KB 	    3448832 	 
+1:	00007240.jpg 	     383 KB 	    3706880 	 
+2:	00008008.jpg 	     356 KB 	    4100096 	 
+3:	00008728.jpg 	     317 KB 	    4468736 	 
+4:	00009611.jpg 	      14 KB 	    4920891 	 
+5:	00027648.jpg 	     109 KB 	   14155776 	 
+6:	00027872.jpg 	     162 KB 	   14270464 	 
+7:	00041080.jpg 	     622 KB 	   21032960 	 
+8:	00042374.jpg 	     222 KB 	   21695929 	 
+9:	00043337.jpg 	      87 KB 	   22188979 	 
+10:	00043523.jpg 	      64 KB 	   22283932 	 
+11:	00044248.jpg 	      75 KB 	   22654976 	 
+12:	00044400.jpg 	     632 KB 	   22732800 	 
+13:	00013512.wav 	     736 KB 	    6918144 	 
+14:	00031016.docx 	      12 KB 	   15880192 	 
+15:	00031048.rar 	       7 KB 	   15896576 	 Password Protected:
+16:	00045672.rar 	      50 KB 	   23384064 	 Encrypted Headers!
+17:	00009368.pdf 	     158 KB 	    4796416 	  (PDF is Linearized)
+18:	00042328.pdf 	     958 KB 	   21671936 	 
+Finish: Mon May  4 00:58:38 2026
+
+19 FILES EXTRACTED
+	
+jpg:= 13
+rif:= 1
+zip:= 1
+rar:= 2
+pdf:= 2
+------------------------------------------------------------------
+
+Foremost finished at Mon May  4 00:58:38 2026

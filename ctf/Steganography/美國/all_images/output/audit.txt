@@ -1,0 +1,67 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Mon May  4 16:20:16 2026
+Invocation: foremost -i 4.png cc.png Geralt.png mine.png over.png maj.bmp 
+Output directory: /home/yhl/NSYSU/NetSec/ctf/Steganography/美國/all_images/output
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: 4.png
+Start: Mon May  4 16:20:16 2026
+Length: 359 KB (368564 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+0:	00000000.png 	     359 KB 	          0 	  (2274 x 1736)
+Finish: Mon May  4 16:20:16 2026
+------------------------------------------------------------------
+File: cc.png
+Start: Mon May  4 16:20:16 2026
+Length: 4 KB (4396 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+1:	00000000_1.png 	       4 KB 	          0 	  (208 x 60)
+Finish: Mon May  4 16:20:16 2026
+------------------------------------------------------------------
+File: Geralt.png
+Start: Mon May  4 16:20:16 2026
+Length: 874 KB (895629 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+2:	00000000_2.png 	     874 KB 	          0 	  (994 x 696)
+Finish: Mon May  4 16:20:16 2026
+------------------------------------------------------------------
+File: mine.png
+Start: Mon May  4 16:20:16 2026
+Length: 1 MB (1712640 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+3:	00000000_3.png 	       1 MB 	          0 	  (1770 x 1017)
+Finish: Mon May  4 16:20:16 2026
+------------------------------------------------------------------
+File: over.png
+Start: Mon May  4 16:20:16 2026
+Length: 268 KB (274480 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+4:	00000000_4.png 	     268 KB 	          0 	  (640 x 480)
+Finish: Mon May  4 16:20:16 2026
+------------------------------------------------------------------
+File: maj.bmp
+Start: Mon May  4 16:20:16 2026
+Length: 168 KB (172058 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+Finish: Mon May  4 16:20:16 2026
+
+5 FILES EXTRACTED
+	
+png:= 5
+------------------------------------------------------------------
+
+Foremost finished at Mon May  4 16:20:16 2026
