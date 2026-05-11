@@ -324,3 +324,246 @@ curl -X POST http://idsctf.mis.nsysu.edu.tw:9019/checksum.php \
 - SHAttered 原始論文 (Stevens et al., CRYPTO 2017): *The first collision for full SHA-1*
 - `corkami/collisions` GitHub repo（hash collision 範例庫）
 - RFC 3174 — SHA-1 規範（Merkle-Damgård 結構與 block 處理）
+
+---
+
+# 附錄：核心驗證原理（給沒接觸過 hash function 的讀者）
+
+正文聚焦在「為什麼這樣想 / 怎麼做」。這份附錄補完「為什麼這樣做就能成立」 — 從 server 端到密碼學原理一次串完。讀完之後你不只能照抄這題，下次遇到任何 hash collision 變形題都能自己推。
+
+整題的「驗證」其實有四個層次，從具體到抽象：
+
+1. Server 端怎麼判斷你贏了
+2. 你自己怎麼確認手上這對檔案合法
+3. SHA-1 演算法為什麼會撞
+4. 為什麼截 320 bytes 還是同 hash
+
+---
+
+## A1. Server 端：PHP 內部怎麼決定給不給 flag
+
+從三次探測（hello/world、same/same、collision pair）的回應逆推，`checksum.php` 邏輯：
+
+```php
+<?php
+$o1 = $_POST['object1'];      // 第一個 input，原始 bytes
+$o2 = $_POST['object2'];      // 第二個 input，原始 bytes
+
+if ($o1 === $o2) {
+    echo "Files are identical";
+    echo '<img src="b.jpg">';
+}
+else if (sha1($o1) === sha1($o2)) {
+    echo "Flag{Sh4ttEr_ShA1!!!}";   // 只有這條路徑會吐 flag
+    echo '<img src="a.png">';
+}
+else {
+    echo "<!-- Hash of Object 1: " . sha1($o1) . " -->";
+    echo "<!-- Hash of Object 2: " . sha1($o2) . " -->";
+    echo '<img src="c.png">';
+}
+```
+
+只有一條路徑會印 flag：**`$o1 !== $o2` 且 `sha1($o1) === sha1($o2)`**。
+
+注意 PHP 用 `===`（byte-for-byte 嚴格比對），不是字串模糊比對。所以「兩個 input 不同」必須真的有任一 byte 不一樣，「hash 相同」必須完全 40 hex 字元一致。
+
+**Server 端「驗證」就這麼簡單。整題的難點不在 server，難點在你怎麼造出一對滿足條件的 byte 串。**
+
+---
+
+## A2. 自己手動驗證手上的 collision pair 合法
+
+不要相信任何 writeup 寫的話，自己跑下面四條指令，每條都有預期輸出可以對照。先換到資料夾：
+
+```bash
+cd /mnt/c/Users/USER/Desktop/revenge_of_hash
+```
+
+### 驗證 A：兩個檔案 SHA-1 必須相同
+
+```bash
+sha1sum mini1.bin mini2.bin
+```
+
+預期：
+
+```
+f92d74e3874587aaf443d1db961d4e26dde13e9c  mini1.bin
+f92d74e3874587aaf443d1db961d4e26dde13e9c  mini2.bin
+```
+
+兩行前 40 字元一字不差 → SHA-1 collision 成立。
+
+### 驗證 B：兩個檔案 MD5 必須不同
+
+```bash
+md5sum mini1.bin mini2.bin
+```
+
+預期：
+
+```
+80e808e7abdbe9109903c71f049a30f7  mini1.bin
+736acaed4ec96ab7120fb5fd750f1f07  mini2.bin
+```
+
+MD5 不同 → 證明它們真的是**不同檔案**。如果 MD5 也相同那只是同檔複製，server 會走第一條 if 路徑判 `Files are identical`。
+
+### 驗證 C：直接 byte 級別比較
+
+```bash
+cmp mini1.bin mini2.bin
+```
+
+預期：
+
+```
+mini1.bin mini2.bin differ: byte 193, line 8
+```
+
+`cmp` 找到第一個不同的 byte 在第 193 個位置 → 確認 byte 層面就不同。
+
+### 驗證 D：大小必須一樣
+
+```bash
+wc -c mini1.bin mini2.bin
+```
+
+預期：
+
+```
+320 mini1.bin
+320 mini2.bin
+640 total
+```
+
+兩個都是 320 bytes。**為什麼大小要一樣**？A4 會解釋 — 這是 collision 成立的隱形必要條件。
+
+**這四步都通過 = 手裡這對檔案百分之百能拿 flag**，剩下只是怎麼把它們送上 server（前面 curl 那段）。
+
+---
+
+## A3. SHA-1 演算法為什麼會撞 — 內部運作
+
+SHA-1 是 **Merkle–Damgård** 結構（這也是 MD5、SHA-2 共用的設計）。它不是「把整個檔案一次性算」，是**一塊一塊處理**。
+
+### SHA-1 處理流程
+
+```
+訊息 ──► 切成 64-byte block ──► block1, block2, block3, ...
+                                ↓
+        初始 chaining value (固定的 IV，公開常數)
+                                ↓
+                  ┌──────────────┐
+                  │ compression  │ ◄── block1
+                  │  function f  │
+                  └──────┬───────┘
+                         ↓ 新 chaining value (160-bit, 5 × 32-bit 暫存器)
+                  ┌──────────────┐
+                  │ compression  │ ◄── block2
+                  │  function f  │
+                  └──────┬───────┘
+                         ↓
+                       ...
+                         ↓
+            最後一塊：padding block（補 1 bit "1" + 若干 "0" + 訊息長度 64-bit）
+                         ↓
+              最後的 chaining value = SHA-1 hash
+```
+
+### 三個關鍵性質
+
+1. **chaining value（簡稱 CV）只有 160 bit**，無論訊息多長，每處理完一個 block 都被新 CV 取代。SHA-1 沒有「記憶體」儲存全部歷史，只有這 160 bit 的內部狀態
+2. compression function `f` 是**確定性**的：`f(CV, block) → 新 CV`。同 input 永遠同 output
+3. **只要兩段訊息在某個時間點走到相同 CV**，後面接同樣的 block 序列、最後做同樣的 length padding，最終 hash 一定相同
+
+### Collision 的本質
+
+「找兩段不同訊息 M₁、M₂ 使 `sha1(M₁) == sha1(M₂)`」 → 等價於「找 M₁、M₂ 使它們處理完所有 block 後 CV 相同」。
+
+`f` 設計上應該讓「兩個不同 block 從同 CV 走到同新 CV」這件事極難實現（這叫 **near-collision**）。但 2017 年 Stevens 等人用 **6500 CPU 年 + 110 GPU 年**的算力**真的找到了一對**。從那之後 SHA-1 正式被宣告破。
+
+### SHAttered 那對 PDF 的構造
+
+```
+偏移       0─────191    192─────319    320─────end
+           (3 blocks)   (2 blocks)     (剩下 block 一堆)
+
+PDF1       相同前綴      NCB-1 (不同)   完全相同尾段
+                         ↓
+                         走過 f
+                         ↓
+PDF2       相同前綴      NCB-2 (不同)   完全相同尾段
+                         ↓
+                         走過 f
+                         ↓
+           CV 相同 ──►  CV 仍相同 ──►  仍相同 ──►  ... ──►  最終 hash 相同
+                       (NCB 設計
+                       讓 CV 重新
+                       收斂)
+```
+
+- **bytes 0-191**（block 1-3）兩檔完全相同 → 處理完 CV 一定相同
+- **bytes 192-319**（block 4-5）兩檔不同（NCB = near-collision block）→ 但 NCB 是 Stevens 算出來的特殊 block，設計目的就是：兩個不同 block 從同 CV 走過 `f` 後 CV 仍然相同
+- **bytes 320 之後**兩檔完全相同 → 既然 CV 在 320 處已合流，後面 block 都同、走 `f` 結果同 → 最後 CV 相同 → SHA-1 相同
+
+---
+
+## A4. 為什麼截前 320 bytes 還是同 SHA-1
+
+把 A3 的理論套用到具體操作。
+
+### 兩個 320-byte 檔案的 SHA-1 計算過程
+
+```
+mini1.bin  =  block 1 │ block 2 │ block 3 │ block 4 │ block 5
+              (相同)  │ (相同)  │ (相同)  │ NCB-1   │ NCB-2 (差)
+mini2.bin  =  block 1 │ block 2 │ block 3 │ block 4'│ block 5'
+              (相同)  │ (相同)  │ (相同)  │ NCB-1'  │ NCB-2' (差)
+```
+
+- block 1-3 完全相同 → 走完 `f` 之後兩邊 CV 相同
+- block 4 是 NCB → 兩邊內容不同，但 NCB 構造保證走完 `f` 之後 CV 仍相同
+- block 5 是另一個 NCB → 同上
+
+走完 5 個 block 後：**兩邊都得到完全相同的 CV**。
+
+### 最後一步：length padding
+
+SHA-1 規範規定，處理完所有資料 block 後，要加一塊 padding：
+
+- 1 個 bit 的 `1`
+- 若干個 `0` 填到剛好缺 8 個 bytes
+- 最後 8 個 bytes 寫入「原始訊息位元長度」（64-bit big-endian）
+
+mini1.bin 和 mini2.bin 都是 **320 bytes = 2560 bits**。所以兩邊的 padding block 內容**完全一樣**（同樣的 `1`、同樣多的 `0`、同樣的長度欄位 `2560`）。
+
+因為 padding block 完全一樣、加上前面 CV 完全一樣，走完最後一次 `f` 之後 CV 仍然一樣。**那個 CV 就是最終 SHA-1**。
+
+所以 `sha1(mini1.bin) === sha1(mini2.bin)`，得證。
+
+### 「大小要一樣」的真正原因（驗證 D 的答案）
+
+如果 mini1.bin 是 320 bytes、mini2.bin 是 321 bytes，padding block 內容就會不同（一個寫 `2560`，另一個寫 `2568`）→ 最後 CV 不同 → SHA-1 不同。
+
+**Collision 不只要求 CV 在某個時間點重合，還要求兩邊訊息長度相同**，這樣 padding 才會一致。SHAttered 構造這對 PDF 時故意做成同長度，就是為了這個。
+
+### 那能不能截更少，比如 256 bytes？
+
+不行。差異區從 byte 192 延伸到 byte 320。截到 256 bytes 等於只塞了第二個 NCB（block 5）的前一半給 `f` 處理 — block 5 的後半被丟掉，NCB 的「讓 CV 收斂」設計失效，CV 不會合流。
+
+**320 是最少能保留完整 collision 結構的 byte 數**（剛好等於 5 個 SHA-1 block 整數倍 = 5 × 64 = 320）。
+
+---
+
+## 整體驗證脈絡總結
+
+| 驗證層次 | 重點 | 怎麼自己證實 |
+|---|---|---|
+| Server 端 | 三條 if/else 路徑，只有 `不同 + 同 hash` 才吐 flag | 看三種探測回應對照 |
+| 檔案合法性 | SHA-1 同、MD5 異、bytes 異、size 同 | 跑驗證 A/B/C/D |
+| SHA-1 為何能撞 | Merkle–Damgård 把任意長訊息壓進 160-bit CV；CV 在某時刻重合後永遠重合 | 讀 SHAttered 論文 + RFC 3174 |
+| 為何 320 bytes 夠 | 差異區僅在 bytes 192-319，截到 320 剛好包住完整 NCB，且兩邊同長度確保 padding 一致 | `cmp -l` 看差異範圍 + `wc -c` 看大小 |
+
+**最核心一句話**：SHA-1 不是看整個檔案，是一段一段處理；只要在某個 64-byte 邊界上**兩邊內部狀態（CV）變一樣**，後面就再也分不出來。SHAttered 找到一對能讓 CV 收斂的特殊 byte block，我們只是把它截到最短能用的大小（320 bytes）丟給 server。
