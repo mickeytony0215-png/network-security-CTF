@@ -37,7 +37,14 @@ flag{vulns_c4N_b_pLaYing_g4me}
 - PuyoVS
 - OpenMPT（音樂追蹤器軟體）
 
-其中 Minecraft 使用了 **log4j 2.8.1**，這是一個存在嚴重 RCE 漏洞（Log4Shell, CVE-2021-44228）的版本。這就是題目所說的「遊戲中的漏洞」。
+先看一眼版本：Minecraft 1.12.2 內附的是 log4j 2.8.1。雖然這個版本日後（2021）會牽涉到 Log4Shell（CVE-2021-44228），但本題 2018 年出題、且整條攻擊鏈與 JNDI lookup 無關，**不要被版本號誤導往 Log4Shell 的方向猜**。題目所說的「遊戲中的漏洞」實際上指的是後面會看到的**社交工程 + 隱寫在 Minecraft skin 內的 payload**——也就是利用玩家會互傳 skin 檔案這件事，把惡意內容藏進 PNG 的 IEND 之後。
+
+判斷依據：
+- 攻擊鏈中沒有任何網路服務暴露 log4j sink，沒有 `${jndi:...}` 字串，整段 PowerShell payload 是從附加在 PNG 後面的 bytes 取出，跟 log4j 完全不相干。
+- 時間軸上，2018 年出題者不可能預知 2021 才公開的 0-day。
+- mptrack.ini 的 Recent File List（見後）直接指出題目來源是 FBCTF 的 forensic 題，主題是社交工程而非伺服器漏洞。
+
+所以線索 1 真正要記住的是：**Peter 是 Minecraft 玩家，朋友圈會互傳 skin**——這是後面密碼與惡意 skin 出現的場景前提。
 
 ### 線索 2：聊天紀錄暴露密碼
 
